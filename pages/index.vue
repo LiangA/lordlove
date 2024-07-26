@@ -4,9 +4,6 @@
     <div>
       <h1>Welcome to the index page</h1>
     </div>
-    <NuxtLink to="/about">
-      About page
-    </NuxtLink>
   </v-main>
 </template>
 

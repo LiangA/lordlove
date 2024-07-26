@@ -1,28 +1,52 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
-import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+// nuxt.config.ts
+// import { defineNuxtConfig } from 'nuxt'
+import vuetify from 'vite-plugin-vuetify'
+import { defineNuxtConfig } from 'nuxt/config'; // 從 'nuxt/config' 導入
+
+
 export default defineNuxtConfig({
   devtools: { enabled: true },
   build: {
     transpile: ['vuetify'],
   },
   modules: [
-    (_options, nuxt) => {
+    async (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
-        // @ts-expect-error
+        config.plugins = config.plugins || []
         config.plugins.push(vuetify({ autoImport: true }))
       })
     },
-    //...
   ],
+  router: {
+    mode: 'history'
+  },  
   vite: {
-    vue: {
-      template: {
-        transformAssetUrls,
-      },
+    ssr: {
+      noExternal: ['vuetify'],
+    },
+    define: {
+      'process.env.DEBUG': false,
     },
   },
+  // 啟用 SSR
+  ssr: true, 
+
+  // Firebase Functions 設定
+  nitro: {
+    preset: 'firebase', 
+    prerender: {
+      crawlLinks: true,
+      routes: ['/']
+    },
+    firebase: {
+      nodeVersion: '18',
+      gen: 2,
+    }
+  },
+
+  // 其他 Nuxt 設定
   app: {
-    baseURL: process.env.NODE_ENV === 'production' ? '/nuxt3-generate/' : '/',
-    buildAssetsDir: '/static/'
+    baseURL: '/', 
+    buildAssetsDir: '/_nuxt/' 
   },
 })
